@@ -1,4 +1,4 @@
-在underscore中有一个`Ctor`函数，代码如下：
+* create 函数,Object.create的腻子垫片。
 ```javascript
   var Ctor = function(){};
   var nativeCreate = Object.create;
@@ -10,14 +10,13 @@
     Ctor.prototype = null;
     return result;
   };
-  _.create = function(prototype, props) {
+    _.create = function(prototype, props) {
     var result = baseCreate(prototype);
     if (props) _.extendOwn(result, props);
     return result;
   };
 
 ```
-
-可以看出这个函数式`Object.create`的腻子脚本（polyfll），而`Object.create`的作用是
+`Object.create`的作用是
 > 使用给定的对象当做原型，创建一个新的对象
 
