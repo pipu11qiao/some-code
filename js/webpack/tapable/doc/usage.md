@@ -41,11 +41,12 @@ class Car {
 ```
 创建完hook其他人就可以通过发布订阅来使用这个hook。
 
-```
+```javascript
 const myCar = new Car();
 
 // Use the tap method to add a consument
 myCar.hooks.brake.tap("WarningLampPlugin", () => warningLamp.on());
+
 ```
 
 也可以接收订阅函数中添加参数：
@@ -82,6 +83,7 @@ myCar.hooks.calculateRoutes.tap("CachedRoutesPlugin", (source, target, routesLis
 调用的方式也会不同，调用就是trigger触发的意思：
 
 ```javascript
+
 class Car {
 	/**
 	  * You won't get returned value from SyncHook or AsyncParallelHook,
@@ -134,8 +136,133 @@ Hook 类型
 * 异步并行 通过tap，tapAysnc tapPromise订阅,并行的方式执行代码
 
 
+#### Interception 拦截器
+
+所有的钩子提供拦截器接口：
+
+```javascript
+myCar.hooks.calculateRoutes.intercept({
+	call: (source, target, routesList) => {
+		console.log("Starting to calculate routes");
+	},
+	register: (tapInfo) => {
+		// tapInfo = { type: "promise", name: "GoogleMapsPlugin", fn: ... }
+		console.log(`${tapInfo.name} is doing its job`);
+		return tapInfo; // may return a new tapInfo object
+	}
+})
+```
+参数：
+* call ```(...args) => void``` 在拦截器中的call方法将在hooks被触发时调用，有权利获取hooks参数
+* tap ```（tap:Tap）=> void ```  在拦截器中的tap方法将在有插件注册到钩子中触发，参数是Tap对象
+* loop: ```(...args) => void``` 在拦截器中的loop方法将在每个循环钩子循环时触发
+* register: ```（tap:Tap）=> Tap | underfined ``` 在拦截器中的register方法将在每次添加Tap时触发，并且允许你修改它
+
+#### Context 上下文
+
+用来向订阅的插件或拦截器传递任意的值
+
+```javascript
+myCar.hooks.accelerate.intercept({
+	context: true,
+	tap: (context, tapInfo) => {
+		// tapInfo = { type: "sync", name: "NoisePlugin", fn: ... }
+		console.log(`${tapInfo.name} is doing it's job`);
+
+		// `context` starts as an empty object if at least one plugin uses `context: true`.
+		// If no plugins use `context: true`, then `context` is undefined.
+		if (context) {
+			// Arbitrary properties can be added to `context`, which plugins can then access.
+			context.hasMuffler = true;
+		}
+	}
+});
+
+myCar.hooks.accelerate.tap({
+	name: "NoisePlugin",
+	context: true
+}, (context, newSpeed) => {
+	if (context && context.hasMuffler) {
+		console.log("Silence...");
+	} else {
+		console.log("Vroom!");
+	}
+});
+```
+
+#### HookMap 钩子集
+
+一个钩子集是对一系列的钩子的帮助类
+
+```javascript
+
+const keyedHook = new HookMap(key => new SyncHook(["arg"]))
+keyedHook.for("some-key").tap("MyPlugin", (arg) => { /* ... */ });
+keyedHook.for("some-key").tapAsync("MyPlugin", (arg, callback) => { /* ... */ });
+keyedHook.for("some-key").tapPromise("MyPlugin", (arg) => { /* ... */ });
+const hook = keyedHook.get("some-key");
+if(hook !== undefined) {
+	hook.callAsync("arg", err => { /* ... */ });
+}
+
+```
 
 
+#### Hook/HookMap  接口 
+* public
+```javascript
+interface Hook {
+	tap: (name: string | Tap, fn: (context?, ...args) => Result) => void,
+	tapAsync: (name: string | Tap, fn: (context?, ...args, callback: (err, result: Result) => void) => void) => void,
+	tapPromise: (name: string | Tap, fn: (context?, ...args) => Promise<Result>) => void,
+	intercept: (interceptor: HookInterceptor) => void
+}
 
+interface HookInterceptor {
+	call: (context?, ...args) => void,
+	loop: (context?, ...args) => void,
+	tap: (context?, tap: Tap) => void,
+	register: (tap: Tap) => Tap,
+	context: boolean
+}
 
+interface HookMap {
+	for: (key: any) => Hook,
+	intercept: (interceptor: HookMapInterceptor) => void
+}
 
+interface HookMapInterceptor {
+	factory: (key: any, hook: Hook) => Hook
+}
+
+interface Tap {
+	name: string,
+	type: string
+	fn: Function,
+	stage: number,
+	context: boolean,
+	before?: string | Array
+}
+```
+* protected
+
+```javascript
+interface Hook {
+	isUsed: () => boolean,
+	call: (...args) => Result,
+	promise: (...args) => Promise<Result>,
+	callAsync: (...args, callback: (err, result: Result) => void) => void,
+}
+
+interface HookMap {
+	get: (key: any) => Hook | undefined,
+	for: (key: any) => Hook
+}
+```
+#### MultiHook
+将钩子移动到别的钩子集上
+```javascript
+const { MultiHook } = require("tapable");
+
+this.hooks.allHooks = new MultiHook([this.hooks.hookA, this.hooks.hookB]);
+```
