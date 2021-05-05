@@ -4,11 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "testPromise": "promises-aplus-tests ./promise/1.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "react": "^16.12.0"
+  },
+  "devDependencies": {
+    "promises-aplus-tests": "^2.1.2"
   }
 }
