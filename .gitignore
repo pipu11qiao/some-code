@@ -4,4 +4,5 @@ node_modules
 package-lock.json
 npm-debug.log*
 test
+js/webpack/webpack-5.52.0
 
