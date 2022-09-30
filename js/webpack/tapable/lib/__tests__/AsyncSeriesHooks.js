@@ -11,28 +11,28 @@ const AsyncSeriesWaterfallHook = require("../AsyncSeriesWaterfallHook");
 const AsyncSeriesLoopHook = require("../AsyncSeriesLoopHook");
 
 describe("AsyncSeriesHook", () => {
-	it('should not have call method', () => {
+	it("should not have call method", () => {
 		const hook = new AsyncSeriesHook([]);
-		expect(hook.call).toEqual(undefined)
-		expect(typeof hook.callAsync).toEqual('function')
-		expect(typeof hook.promise).toEqual('function')
-	})
+		expect(hook.call).toEqual(undefined);
+		expect(typeof hook.callAsync).toEqual("function");
+		expect(typeof hook.promise).toEqual("function");
+	});
 
-	it('should have tap method', (done) => {
+	it("should have tap method", done => {
 		const hook = new AsyncSeriesHook([]);
-		const mockTap = jest.fn()
-		hook.tap('somePlugin', mockTap)
-		hook.callAsync(() => done())
-		expect(mockTap).toHaveBeenCalledTimes(1)
-	})
+		const mockTap = jest.fn();
+		hook.tap("somePlugin", mockTap);
+		hook.callAsync(() => done());
+		expect(mockTap).toHaveBeenCalledTimes(1);
+	});
 
-	it('should have promise method', (done) => {
+	it("should have promise method", done => {
 		const hook = new AsyncSeriesHook([]);
-		const mockTap = jest.fn()
-		hook.tap('somePlugin', mockTap)
-		hook.promise().then(() => done())
-		expect(mockTap).toHaveBeenCalledTimes(1)
-	})
+		const mockTap = jest.fn();
+		hook.tap("somePlugin", mockTap);
+		hook.promise().then(() => done());
+		expect(mockTap).toHaveBeenCalledTimes(1);
+	});
 
 	it("should have to correct behavior", async () => {
 		const tester = new HookTester(args => new AsyncSeriesHook(args));
@@ -50,6 +50,16 @@ describe("AsyncSeriesBailHook", () => {
 		const result = await tester.run();
 
 		expect(result).toMatchSnapshot();
+	});
+
+	it("should not crash with many plugins", () => {
+		const hook = new AsyncSeriesBailHook(["x"]);
+		for (let i = 0; i < 1000; i++) {
+			hook.tap("Test", () => 42);
+		}
+		hook.tapAsync("Test", (x, callback) => callback(null, 42));
+		hook.tapPromise("Test", x => Promise.resolve(42));
+		return expect(hook.promise()).resolves.toBe(42);
 	});
 });
 

@@ -4,8 +4,6 @@
 */
 "use strict";
 
-require("babel-polyfill");
-
 const SyncBailHook = require("../SyncBailHook");
 
 describe("SyncBailHook", () => {
@@ -37,19 +35,19 @@ describe("SyncBailHook", () => {
 		expect(await pify(cb => h2.callAsync(10, 20, cb))).toEqual([10, 20]);
 	});
 
-	it('should bail on non-null return', async() => {
+	it("should bail on non-null return", async () => {
 		const h1 = new SyncBailHook(["a"]);
 		const mockCall1 = jest.fn();
-		const mockCall2 = jest.fn(() => 'B')
-		const mockCall3 = jest.fn(() => 'C')
-		h1.tap('A', mockCall1)
-		h1.tap('B', mockCall2)
-		h1.tap('C', mockCall3)
-		expect(h1.call()).toEqual('B')
-		expect(mockCall1).toHaveBeenCalledTimes(1)
-		expect(mockCall2).toHaveBeenCalledTimes(1)
-		expect(mockCall3).toHaveBeenCalledTimes(0)
-	})
+		const mockCall2 = jest.fn(() => "B");
+		const mockCall3 = jest.fn(() => "C");
+		h1.tap("A", mockCall1);
+		h1.tap("B", mockCall2);
+		h1.tap("C", mockCall3);
+		expect(h1.call()).toEqual("B");
+		expect(mockCall1).toHaveBeenCalledTimes(1);
+		expect(mockCall2).toHaveBeenCalledTimes(1);
+		expect(mockCall3).toHaveBeenCalledTimes(0);
+	});
 
 	it("should allow to intercept calls", () => {
 		const hook = new SyncBailHook(["x"]);
@@ -75,15 +73,23 @@ describe("SyncBailHook", () => {
 		expect(mockTap).toHaveBeenCalled();
 	});
 
-	it('should throw on tapAsync', () => {
+	it("should throw on tapAsync", () => {
 		const hook = new SyncBailHook(["x"]);
-		expect(() => hook.tapAsync()).toThrow(/tapAsync/)
-	})
+		expect(() => hook.tapAsync()).toThrow(/tapAsync/);
+	});
 
-	it('should throw on tapPromise', () => {
+	it("should throw on tapPromise", () => {
 		const hook = new SyncBailHook(["x"]);
-		expect(() => hook.tapPromise()).toThrow(/tapPromise/)
-	})
+		expect(() => hook.tapPromise()).toThrow(/tapPromise/);
+	});
+
+	it("should not crash with many plugins", () => {
+		const hook = new SyncBailHook(["x"]);
+		for (let i = 0; i < 1000; i++) {
+			hook.tap("Test", () => 42);
+		}
+		expect(hook.call()).toBe(42);
+	});
 });
 
 function pify(fn) {

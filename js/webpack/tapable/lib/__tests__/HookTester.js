@@ -4,8 +4,6 @@
 */
 "use strict";
 
-require("babel-polyfill");
-
 describe("HookTester", () => {
 	it("should run", () => {});
 });
@@ -1037,6 +1035,19 @@ class HookTester {
 				call: (a, b, c) => {
 					result[`${type}InterceptedCall1`] = [a, b, c];
 				},
+
+				done: () => {
+					result[`${type}InterceptedDone1`] = true;
+				},
+
+				result: r => {
+					result[`${type}InterceptedResult1`] = r;
+				},
+
+				error: err => {
+					result[`${type}InterceptedError1`] = err;
+				},
+
 				tap: tap => {
 					result[`${type}InterceptedTap1`] = Object.assign({}, tap, {
 						fn: tap.fn.length
@@ -1047,6 +1058,19 @@ class HookTester {
 				call: (a, b, c) => {
 					result[`${type}InterceptedCall2`] = [a, b, c];
 				},
+
+				done: () => {
+					result[`${type}InterceptedDone2`] = true;
+				},
+
+				result: r => {
+					result[`${type}InterceptedResult2`] = r;
+				},
+
+				error: err => {
+					result[`${type}InterceptedError2`] = err;
+				},
+
 				tap: tap => {
 					if (!result[`${type}InterceptedTap2`])
 						result[`${type}InterceptedTap2`] = Object.assign({}, tap, {

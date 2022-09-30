@@ -4,8 +4,6 @@
 */
 "use strict";
 
-require("babel-polyfill");
-
 const SyncHook = require("../SyncHook");
 
 describe("SyncHook", () => {
@@ -67,19 +65,19 @@ describe("SyncHook", () => {
 		expect(mock5).toHaveBeenLastCalledWith("x", "y", undefined);
 	});
 
-	it('should sync execute hooks', () => {
+	it("should sync execute hooks", () => {
 		const h1 = new SyncHook(["a"]);
 		const mockCall1 = jest.fn();
-		const mockCall2 = jest.fn(() => 'B')
-		const mockCall3 = jest.fn(() => 'C')
-		h1.tap('A', mockCall1)
-		h1.tap('B', mockCall2)
-		h1.tap('C', mockCall3)
-		expect(h1.call()).toEqual(undefined)
-		expect(mockCall1).toHaveBeenCalledTimes(1)
-		expect(mockCall2).toHaveBeenCalledTimes(1)
-		expect(mockCall3).toHaveBeenCalledTimes(1)
-	})
+		const mockCall2 = jest.fn(() => "B");
+		const mockCall3 = jest.fn(() => "C");
+		h1.tap("A", mockCall1);
+		h1.tap("B", mockCall2);
+		h1.tap("C", mockCall3);
+		expect(h1.call()).toEqual(undefined);
+		expect(mockCall1).toHaveBeenCalledTimes(1);
+		expect(mockCall2).toHaveBeenCalledTimes(1);
+		expect(mockCall3).toHaveBeenCalledTimes(1);
+	});
 
 	it("should allow to intercept calls", () => {
 		const hook = new SyncHook(["arg1", "arg2"]);
@@ -116,13 +114,13 @@ describe("SyncHook", () => {
 		expect(mock0).toHaveBeenLastCalledWith(1, 2);
 	});
 
-	it('should throw error on tapAsync', () => {
+	it("should throw error on tapAsync", () => {
 		const hook = new SyncHook(["arg1", "arg2"]);
-		expect(() => hook.tapAsync()).toThrow(/tapAsync/)
-	})
+		expect(() => hook.tapAsync()).toThrow(/tapAsync/);
+	});
 
-	it('should throw error on tapPromise', () => {
+	it("should throw error on tapPromise", () => {
 		const hook = new SyncHook(["arg1", "arg2"]);
-		expect(() => hook.tapPromise()).toThrow(/tapPromise/)
-	})
+		expect(() => hook.tapPromise()).toThrow(/tapPromise/);
+	});
 });
