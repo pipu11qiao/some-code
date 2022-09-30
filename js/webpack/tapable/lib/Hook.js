@@ -21,22 +21,29 @@ const PROMISE_DELEGATE = function(...args) {
 	this.promise = this._createCall("promise");
 	return this.promise(...args);
 };
-
+// 发布订阅
 class Hook {
 	constructor(args = [], name = undefined) {
-		this._args = args;
-		this.name = name;
-		this.taps = [];
-		this.interceptors = [];
+		this._args = args; // 传入的args参数 用来定义参数名
+		this.name = name; // hoom名称
+		this.taps = []; // 监听的事件池子
+		this.interceptors = []; // 事件拦截器
+
+		// 不同的调用方法,就是不同的发布方法
 		this._call = CALL_DELEGATE;
 		this.call = CALL_DELEGATE;
 		this._callAsync = CALL_ASYNC_DELEGATE;
 		this.callAsync = CALL_ASYNC_DELEGATE;
 		this._promise = PROMISE_DELEGATE;
 		this.promise = PROMISE_DELEGATE;
+		
+		// 临时的池子
 		this._x = undefined;
 
+		// 发布函数调用时，用来编译发布函数的编译器
 		this.compile = this.compile;
+
+		// 不同的订阅函数
 		this.tap = this.tap;
 		this.tapAsync = this.tapAsync;
 		this.tapPromise = this.tapPromise;

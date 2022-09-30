@@ -19,14 +19,14 @@ class HookCodeFactory {
 				fn = new Function(
 					this.args(),
 					'"use strict";\n' +
-						this.header() +
-						this.contentWithInterceptors({
-							onError: err => `throw ${err};\n`,
-							onResult: result => `return ${result};\n`,
-							resultReturns: true,
-							onDone: () => "",
-							rethrowIfPossible: true
-						})
+					this.header() +
+					this.contentWithInterceptors({
+						onError: err => `throw ${err};\n`,
+						onResult: result => `return ${result};\n`,
+						resultReturns: true,
+						onDone: () => "",
+						rethrowIfPossible: true
+					})
 				);
 				break;
 			case "async":
@@ -35,12 +35,12 @@ class HookCodeFactory {
 						after: "_callback"
 					}),
 					'"use strict";\n' +
-						this.header() +
-						this.contentWithInterceptors({
-							onError: err => `_callback(${err});\n`,
-							onResult: result => `_callback(null, ${result});\n`,
-							onDone: () => "_callback();\n"
-						})
+					this.header() +
+					this.contentWithInterceptors({
+						onError: err => `_callback(${err});\n`,
+						onResult: result => `_callback(null, ${result});\n`,
+						onDone: () => "_callback();\n"
+					})
 				);
 				break;
 			case "promise":
@@ -75,6 +75,7 @@ class HookCodeFactory {
 				fn = new Function(this.args(), code);
 				break;
 		}
+		console.log('current fn content: \n\n', fn.toString())
 		this.deinit();
 		return fn;
 	}
@@ -189,9 +190,8 @@ class HookCodeFactory {
 					code += `var _tap${tapIndex} = ${this.getTap(tapIndex)};\n`;
 					hasTapCached = true;
 				}
-				code += `${this.getInterceptor(i)}.tap(${
-					interceptor.context ? "_context, " : ""
-				}_tap${tapIndex});\n`;
+				code += `${this.getInterceptor(i)}.tap(${interceptor.context ? "_context, " : ""
+					}_tap${tapIndex});\n`;
 			}
 		}
 		code += `var _fn${tapIndex} = ${this.getTapFn(tapIndex)};\n`;
