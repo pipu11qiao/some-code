@@ -27,8 +27,7 @@ hook.call('a1', 'a2', 'a3')
 /* 输出
 current fn content:
 
-function anonymous(arg1, arg2
-) {
+function anonymous(arg1, arg2) {
   "use strict";
   var _context = {};
   var _x = this._x;

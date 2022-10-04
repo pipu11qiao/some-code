@@ -1,21 +1,18 @@
 const { SyncHook } = require('../lib/index')
 
-
 const hook = new SyncHook(["arg1", "arg2"]);
 
 hook.tap('1', function (arg1, arg2) {
   console.log('1', arg1, arg2)
 })
-
 hook.tap('2', function (arg1, arg2) {
   console.log('2', arg1, arg2)
 })
-
 hook.tap('3', function (arg1, arg2) {
   console.log('3', arg1, arg2)
 })
-
 hook.call('a1', 'a2', 'a3')
+
 /* 输出: 
 function anonymous(arg1, arg2) {
   "use strict";
