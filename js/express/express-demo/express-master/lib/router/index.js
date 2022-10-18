@@ -278,6 +278,7 @@ proto.handle = function handle(req, res, out) {
 
     // this should be done for the layer
     self.process_params(layer, paramcalled, req, res, function (err) {
+      console.log('next execute');
       if (err) {
         next(layerError || err)
       } else if (route) {

@@ -23,6 +23,19 @@
         "DEBUG": "*,-not_this"
       },
       "program": "${workspaceFolder}/debug-2.6.9/fileTest/base.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "express demo",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "env": {
+        // "DEBUG": "express:*"
+      },
+      "program": "${workspaceFolder}/express-demo/index.js"
     }
+
   ]
 }
