@@ -1,6 +1,7 @@
 export class Element {
   name = "";
   text = "";
+  el = null;
   constructor(name) {
     this.name = name;
     this.text = name;
@@ -14,11 +15,15 @@ export class Element {
   getNode() {
     return null;
   }
+  addEventListener(eName, handler) {
+    this.el.addEventListener(eName, handler);
+  }
   static add(domElementObj, elementObj) {
     const node = elementObj.getNode();
     domElementObj.appendChild(node);
   }
 }
+
 
 export class Button extends Element {
   constructor(name) {
@@ -34,9 +39,6 @@ export class Button extends Element {
 
   getHtml() {
     return `<button>${this.text}</button>`;
-  }
-  addEventListener(eName, handler) {
-    this.el.addEventListener(eName, handler);
   }
   destroy() {
     this.el = null;

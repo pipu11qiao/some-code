@@ -39,7 +39,7 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin(),
     new HtmlWebpackPlugin({
-      title: "管理输出",
+      title: "page",
     }),
   ],
   resolve: {

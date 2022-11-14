@@ -1,10 +1,20 @@
 import _ from "lodash";
 import "./css/reset.css";
+import printMe from "./print";
 
+import helloPage, { update } from "./pages/hello";
 
+helloPage();
+printMe();
 
-import helloPage from "./pages/hello";
+if (module.hot) {
+  module.hot.accept("./print.js", function () {
+    console.log("Accepting the updated printMe module!");
+    printMe();
+  });
 
-
-helloPage()
-
+  module.hot.accept("./pages/hello.js", function () {
+    console.log("Accepting the updated hello module!");
+    update();
+  });
+}
