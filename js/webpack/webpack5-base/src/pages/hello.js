@@ -5,7 +5,7 @@ import { Button, Element } from "@src/util/element";
 
 export function component() {
   const element = document.createElement("div");
-  const btn1Name = "btn2";
+  const btn1Name = "btn1";
   const btn1 = new Button(btn1Name);
   element.className = "hello-box";
 
